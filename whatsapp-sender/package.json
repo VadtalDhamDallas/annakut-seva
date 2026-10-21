@@ -1,0 +1,9 @@
+{
+  "name": "annakut-whatsapp-sender",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.64.0"
+  }
+}

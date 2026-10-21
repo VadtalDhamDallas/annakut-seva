@@ -1,0 +1,8 @@
+{
+  "api": "PASTE your Apps Script Web App URL (ends with /exec)",
+  "pin": "PASTE the Admin PIN shown when you ran setup()",
+  "templeName": "Shree Swaminarayan Hindu Temple - VadtalDham Dallas",
+  "templeShort": "VadtalDham Dallas",
+  "eventDate": "Sunday, November 15, 2026",
+  "timezone": "America/Chicago"
+}

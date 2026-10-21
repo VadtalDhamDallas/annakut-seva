@@ -1,0 +1,151 @@
+ANNAKUT SEVA WEBSITE - STARTER KIT
+==================================
+
+This kit gives your temple its own Annakut seva website:
+  - 971 Annakut dishes with photos and recipes (Gujarati, English, Hindi,
+    plus Punjabi and other languages on request)
+  - devotees choose dishes, register, and can change or cancel later
+  - confirmation email with recipe links, optional WhatsApp confirmation
+  - devotees can offer their own dish; a recipe without onion, garlic or
+    hing is written for it automatically
+  - bookings are saved in your own Google Sheet
+
+Everything is free: GitHub Pages hosts the website, and Google Sheets with
+Apps Script runs the bookings.
+
+Time needed: about 45 minutes. You need a Gmail account (ideally the temple's)
+and a free GitHub account (github.com).
+
+WHAT IS IN THIS KIT
+-------------------
+  website/              the website (upload this to GitHub)
+  google-apps-script/   Code.gs, the booking backend (paste into Google)
+  whatsapp-sender/      optional: sends WhatsApp confirmations from a computer
+
+
+STEP 1 - PUT IN YOUR TEMPLE DETAILS
+-----------------------------------
+Open website/index.html in a plain text editor (TextEdit on Mac, Notepad on
+Windows). Search for "EDIT HERE". Change the values in that block:
+
+  name, short, address, phone, email     your temple's details
+  date / dateShort                       your Annakut date in each language
+  tithi, samvat, pratipada, muhurat      Panchang details for YOUR city
+                                         (look them up on drikpanchang.com and
+                                          set your city at the top of that page)
+  panchangLink                           link to that Drik Panchang page
+  city, presents, galleryCaption, galleryText
+                                         short texts shown on the page
+  api                                    leave empty for now (filled in step 4)
+
+Keep the single quotes ' ' around each value. If a text needs an apostrophe,
+use the curly ’ instead of ' .
+
+Then, near the top of the same file (lines 6-25), replace:
+  YOUR TEMPLE NAME                       with your temple name
+  YOUR-GITHUB-NAME                       with your GitHub user name (step 3)
+
+
+STEP 2 - REPLACE THE PICTURES (keep the same file names)
+--------------------------------------------------------
+In website/img/:
+  logo-wide.webp     your logo, wide (about 720 x 240)
+  logo.webp          your logo, square (about 192 x 192)
+  icon.png           square icon, 180 x 180 (phone home-screen icon)
+  og.jpg             1200 x 630 picture shown when the link is shared on
+                     WhatsApp or Facebook
+  g/1.webp ... g/12.webp     your temple / last year's Annakut photos (large)
+  g/1t.webp ... g/12t.webp   the same photos, small (about 520 px wide)
+If you have a different number of photos, set "photos:" in EDIT HERE.
+Use any free online "JPG to WebP" converter to make the .webp files.
+
+Dish photos (img/1.webp ... ) and recipes (website/data/) can stay as they are.
+
+
+STEP 3 - PUT THE WEBSITE ONLINE (GitHub Pages)
+----------------------------------------------
+1. Sign in at github.com and click "+" then "New repository".
+   Name it: annakut-seva. Choose Public. Click Create repository.
+2. Click "uploading an existing file". Drag everything INSIDE the website
+   folder (index.html, img, data) into the page. GitHub accepts about 100
+   files per upload, so upload img/ in a few rounds if needed (or use the free
+   GitHub Desktop app to upload everything at once). Click Commit changes.
+3. Go to Settings, then Pages. Under "Branch" choose main and /(root), then Save.
+4. After 1-2 minutes your site is at:
+       https://YOUR-GITHUB-NAME.github.io/annakut-seva/
+
+
+STEP 4 - THE BOOKING BACKEND (Google Sheet + Apps Script)
+---------------------------------------------------------
+1. Signed in to the temple Gmail, go to sheets.new. Name the sheet
+   "Annakut Seva".
+2. Menu: Extensions, then Apps Script. Delete the sample code. Open
+   google-apps-script/Code.gs from this kit, copy ALL of it and paste it in.
+3. At the top, edit the lines marked EDIT (SITE_URL = your website address
+   from step 3, temple name, address, phone, email, timezone, event date).
+   Click Save (the disk icon).
+4. In the function dropdown at the top choose "setup" and click Run.
+   Google asks for permission: Review permissions, choose your account,
+   Advanced, "Go to ... (unsafe)", Allow. (This warning is normal for your
+   own script.) The log at the bottom shows "Admin PIN for the WhatsApp
+   sender: ...". Write that PIN down.
+5. Deploy, then New deployment, then the gear icon, then Web app.
+     Execute as: Me
+     Who has access: Anyone
+   Click Deploy and copy the Web app URL (it ends with /exec).
+6. Paste that URL into website/index.html in EDIT HERE as:  api: '...',
+   then upload index.html to GitHub again (it replaces the old one).
+7. Optional but recommended: choose "pretranslateAll" in the dropdown and
+   click Run once. It fills in English and Hindi translations in the
+   background over the next hour or so.
+
+Bookings appear in the "Bookings" tab. To cancel someone's dish, type
+Cancelled in its Status cell.
+
+If you change Code.gs later: paste it again, Save, then Deploy, Manage
+deployments, the pencil icon, Version: New version, Deploy. The URL stays
+the same.
+
+
+STEP 5 (OPTIONAL) - RECIPES FOR DEVOTEES' OWN DISHES
+----------------------------------------------------
+When someone offers a dish that is not on the list, the site writes a recipe
+for it (no onion, garlic or hing; ghee, oil, milk and water strained). This
+uses Google's free Gemini service:
+1. Go to aistudio.google.com/apikey (temple Gmail) and Create API key.
+2. In Apps Script, click the gear (Project Settings), then Script Properties,
+   then Add script property. Name: GEMINI_API_KEY. Value: your key. Save.
+Without a key, everything else still works; those recipes just say
+"being prepared".
+
+
+STEP 6 (OPTIONAL) - WHATSAPP CONFIRMATIONS
+------------------------------------------
+This sends each person who ticked "Send my confirmation on WhatsApp" a
+personal message 2-8 hours after they register (9am-8pm only). It runs on a
+computer that is logged in to the temple's WhatsApp Web, and it needs
+someone comfortable with a terminal:
+1. Install Node.js (nodejs.org).
+2. In the whatsapp-sender folder run:  npm install
+   then:  npx playwright install chromium
+3. Copy config.example.json to config.json and fill it in (Web App URL, the
+   Admin PIN from step 4, temple name, event date, timezone).
+4. Run:  node sender.js
+   The first time, a browser opens WhatsApp Web; scan the QR code with the
+   temple phone (WhatsApp, then Linked devices).
+5. To run it automatically every 30 minutes, schedule "node sender.js" with
+   Task Scheduler (Windows) or launchd/cron (Mac). The computer must stay on.
+Only message people who asked for it; WhatsApp may block numbers that
+message many strangers.
+
+
+TEST BEFORE SHARING
+-------------------
+- Open your site, choose a dish, register with your own name and email.
+- You should get an email with your dishes, recipe buttons and a
+  "Change my dishes" button. Try changing a dish.
+- Check the Bookings tab, then mark your test row as Cancelled.
+- Share the link on WhatsApp. If an old preview shows, add ?v=2 to the end
+  of the link.
+
+Jay Swaminarayan.
